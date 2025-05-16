@@ -18,8 +18,7 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
-  skip_provider_registration = true
+  features {} 
 }
 
 provider "kubernetes" {
@@ -34,16 +33,27 @@ locals {
   environment = "dev"
   location = var.location
 
-  tags = {
+  tags = merg({
     project = local.project
     environment = local.environment
     managed_by = "terraform"
-  }
+  }, var.tags)
 }
 
 module "resource_group" {
   source = "./modules/resource_group"
   resource_group_name = "${local.project}-${local.environment}-rg"
   location = local.location
+  tags = local.tags
+}
+
+module "network" {
+  source = "./modules/network"
+  vnet_name = "${local.project}-${local.environment}-vnet"
+  vnet_address_space = var.vnet_address_space
+  subnet_name = "aks-subnet"
+  subnet_prefixes = var.subnet_prefixes
+  location = module.resource_group.location
+  resource_group_name = module.resource_group.name
   tags = local.tags
 }
