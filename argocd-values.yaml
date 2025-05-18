@@ -1,0 +1,8 @@
+configs:
+  params:
+    server.insecure: true
+    server.basehref: /argo-cd
+
+server:
+  ingress:
+    enabled: false
