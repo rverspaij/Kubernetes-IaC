@@ -14,6 +14,10 @@ terraform {
         source = "hashicorp/helm"
         version = ">= 2.13.1"
     }
+    kubectl = {
+      source = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
   }
 }
 
@@ -31,11 +35,19 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
+    config_path = "~/.kube/config"
     host                   = azurerm_kubernetes_cluster.k8s.kube_config[0].host
     client_certificate     = base64decode(azurerm_kubernetes_cluster.k8s.kube_config[0].client_certificate)
     client_key             = base64decode(azurerm_kubernetes_cluster.k8s.kube_config[0].client_key)
     cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.k8s.kube_config[0].cluster_ca_certificate)
   }
+}
+
+provider "kubectl" {
+  load_config_file = false
+  host                   = azurerm_kubernetes_cluster.k8s.kube_config[0].host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.k8s.kube_config[0].client_certificate)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.k8s.kube_config[0].cluster_ca_certificate)
 }
 
 locals {

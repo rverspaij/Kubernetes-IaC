@@ -88,17 +88,3 @@ resource "kubernetes_ingress_v1" "hello" {
     }
   }
 }
-
-resource "helm_release" "argocd" {
-  name = "argo-cd"
-  repository = "https://argoproj.github.io/argo-helm"
-  chart = "argo-cd"
-  namespace = "argocd"
-  create_namespace = true
-
-  values = [
-    file("argocd-values.yaml")
-  ]
-
-  depends_on = [ azurerm_kubernetes_cluster.k8s ]
-}
